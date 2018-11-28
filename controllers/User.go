@@ -21,14 +21,14 @@ func (this *UserController) Get() {
 	o := orm.NewOrm()
 	o.Using("default")
 	//用户列表
-	idval,errId:=strconv.ParseInt(this.GetString("Id"),10,64);
-	if errId!=nil{
+	id, err := strconv.ParseInt(this.GetString("id"),10,64);
+	if err != nil{
 		fmt.Println("缺少参数id");
 	}
-	user,err:=models.QueryById(idval)
-	if err==true{
+	user, err2 := models.QueryById(id)
+	if err2 == true{
 		fmt.Println("获取模型失败");
-		fmt.Println(err);
+		fmt.Println(err2);
 	}else{
 		fmt.Println("获取模型成功");
 	}

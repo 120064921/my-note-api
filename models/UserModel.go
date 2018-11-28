@@ -82,11 +82,8 @@ func QueryById(id int64) (User, bool){
 //根据用户名称查询用户
 func QueryByName(name string) (User, error) {
 	var user User
-
 	o := orm.NewOrm()
-	qs := o.QueryTable("user")
-
-	err := qs.Filter("name", name).One(&user)
+	err := o.QueryTable("user").Filter("name", name).One(&user)
 	fmt.Println(err)
 	if err == nil {
 		fmt.Println(user.Name)
