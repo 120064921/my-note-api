@@ -6,10 +6,16 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+const table  = "users"
+
 // 用户
 type User struct{
 	Id              int64    `orm:"auto"`
-	Name            string   `orm:"size(100)"`
+	Username            string   `orm:"size(150)"`
+	Password            string   `orm:"size(255)"`
+	Status            int8   `orm:"size(1)"`
+	Create_time            int64   `orm:"size(11)"`
+	Last_time            int64   `orm:"size(11)"`
 }
 
 //新增用户
@@ -25,7 +31,7 @@ func Create(id int64,name string)  (user User){
 		newuser:=new(User);
 		//赋值给模型
 		newuser.Id = id
-		newuser.Name = name
+		newuser.Username = name
 
 		//新增数据
 		o.Insert(newuser)
@@ -74,7 +80,7 @@ func QueryById(id int64) (User, bool){
 		fmt.Println("找不到主键")
 		return u,false
 	} else {
-		fmt.Println(u.Id, u.Name)
+		fmt.Println(u.Id, u.Username)
 		return u,true
 	}
 }
@@ -83,10 +89,10 @@ func QueryById(id int64) (User, bool){
 func QueryByName(name string) (User, error) {
 	var user User
 	o := orm.NewOrm()
-	err := o.QueryTable("user").Filter("name", name).One(&user)
+	err := o.QueryTable(table).Filter("name", name).One(&user)
 	fmt.Println(err)
 	if err == nil {
-		fmt.Println(user.Name)
+		fmt.Println(user.Username)
 		return user,nil
 	}
 	return user, err
@@ -96,7 +102,7 @@ func QueryByName(name string) (User, error) {
 func DataList() (users []User) {
 
 	o := orm.NewOrm()
-	qs := o.QueryTable("user")
+	qs := o.QueryTable(table)
 
 	var us []User
 	cnt, err :=  qs.Filter("id__gt", 0).OrderBy("-id").Limit(10, 0).All(&us)
@@ -122,7 +128,7 @@ func QueryBySql(sql string, qarms[] string) bool{
 func LimitList(pagesize int,pageno int) (users []User) {
 
 	o := orm.NewOrm()
-	qs := o.QueryTable("user")
+	qs := o.QueryTable(table)
 
 	var us []User
 	cnt, err :=  qs.Limit(pagesize, (pageno-1)*pagesize).All(&us)
@@ -135,7 +141,7 @@ func LimitList(pagesize int,pageno int) (users []User) {
 func GetDataNum() int64 {
 
 	o := orm.NewOrm()
-	qs := o.QueryTable("user")
+	qs := o.QueryTable(table)
 
 	var us []User
 	num, err :=  qs.Filter("id__gt", 0).All(&us)
